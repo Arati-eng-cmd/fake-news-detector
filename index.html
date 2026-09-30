@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fake News Detector</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background-color: #f2f2f2;
+            padding: 40px;
+        }
+
+        h1 {
+            font-size: 35px;
+        }
+
+        textarea {
+            width: 70%;
+            height: 180px;
+            padding: 15px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 16px;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Fake News Detector</h1>
+
+    <p>Enter a news article below:</p>
+
+    <form method="POST">
+        <textarea name="news" 
+        placeholder="Enter news here...">{{ news }}</textarea>
+        <br>
+
+        <button type="submit">PREDICT</button>
+        {% if prediction %}
+    <h2>Prediction: {{ prediction }}</h2>
+    <p>Model Confidence: {{ "%.2f"|format(confidence) }}%</p>
+{% endif %}
+    </form>
+
+</body>
+</html>
