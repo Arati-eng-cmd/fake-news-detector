@@ -1,44 +1,27 @@
-from flask import Flask, render_template, request
-import joblib
+from flask import Flask, request, render_template
+import pickle
 
 app = Flask(__name__)
 
-# Load trained model and TF-IDF vectorizer
-model = joblib.load("model.pkl")
-vectorizer = joblib.load("vectorizer.pkl")
-
+model = pickle.load(open('model.pkl', 'rb'))
+vectorizer = pickle.load(open('vectorizer.pkl', 'rb'))
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-
     prediction = None
-    confidence = None
-    news = ""
-
     if request.method == "POST":
+        news = request.form.get('news', '')
+        if news:
+            vec = vectorizer.transform([news])
+            pred = model.predict(vec)[0]
+            prediction = "Fake News" if pred == 1 else "Real News"
+    return render_template("index.html", prediction=prediction)
 
-        news = request.form["news"]
-
-        # Convert news into TF-IDF
-        news_vector = vectorizer.transform([news])
-
-        # Predict
-        result = model.predict(news_vector)
-
-        prediction = result[0]
-
-        # Calculate confidence
-        probability = model.predict_proba(news_vector)
-        confidence = max(probability[0]) * 100
-
-    return render_template(
-        "index.html",
-        prediction=prediction,
-        confidence=confidence,
-        news=news
-
-    )
-
+@app.route("/predict", methods=["GET", "POST"])
+def predict():
+    return home()
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
+
+        
